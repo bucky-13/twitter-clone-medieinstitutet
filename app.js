@@ -16,13 +16,14 @@ MongoClient.connect('mongodb://127.0.0.1:27017').then((client) => {
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var messagesRouter = require('./routes/messages');
 
 var app = express();
 
-let messagesinterface = [
+let postsObjects = [
   {
-    message: 'string',
-    user: 'string',
+    userName: 'string',
+    userMessage: 'string',
     id: 'string',
   },
 ];
@@ -36,5 +37,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/messages', messagesRouter);
+
+app.get("/test", (req, res) => {
+  res.send("test")
+})
 
 module.exports = app;

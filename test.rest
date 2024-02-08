@@ -1,0 +1,23 @@
+// Create user
+POST http://192.168.171.180:3000/users/add
+Content-Type: application/json
+
+{
+    "userEmail": "",
+    "userName": "",
+    "userPassword": ""
+}
+
+###
+
+GET http://localhost:3000
+Content-Type: application/json
+
+###
+
+
+GET http://192.168.171.180:3001/messages
+Content-Type: application/json
+
+
+###
