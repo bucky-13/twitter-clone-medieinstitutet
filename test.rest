@@ -1,23 +1,60 @@
 // Create user
-POST http://192.168.171.180:3000/users/add
+POST http://192.168.171.180:3001/users/register
 Content-Type: application/json
 
 {
-    "userEmail": "",
+    "userEmail": "hanna@gmail.com",
+    "userName": "Hanna",
+    "userPassword": "test"
+}
+
+###
+
+// Login
+POST http://192.168.171.180:3001/users/login
+Content-Type: application/json
+
+{
     "userName": "",
     "userPassword": ""
 }
 
 ###
 
-GET http://localhost:3000
+// MESSAGES SECTION
+
+POST http://192.168.171.180:3001/messages
+Content-Type: application/json
+
+{
+    "id": "65c4d160d9c96b34c92b8edd"    
+}
+
+###
+
+//Get all messages:
+GET http://192.168.171.180:3001/messages
 Content-Type: application/json
 
 ###
 
-
-GET http://192.168.171.180:3001/messages
+//Add new message:
+POST http://192.168.171.180:3001/messages/add
 Content-Type: application/json
 
+{
+    "userName": "",
+    "userMessage": ""
+  }
+
+###
+
+//All messages from one specific user:
+POST http://192.168.171.180:3001/messages/display
+Content-Type: application/json
+
+{
+    "userName": "Kalle"
+}
 
 ###

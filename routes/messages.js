@@ -1,39 +1,100 @@
 var express = require('express');
 var router = express.Router();
+require('dotenv').config();
+const ObjectId = require('mongodb').ObjectId;
 
-/* GET messages listing. */
-router.get('/', (req, res) => {
-  res.send('this is messages router');
+router.get('/', function (req, res) {
+  req.app.locals.db
+    .collection('messages')
+    .find()
+    .toArray()
+    .then((results) => {
+      res.json(results);
+    });
 });
 
-// router.get('/', function (req, res, next) {
-//   req.app.locals.db
-//     .collection('messages')
-//     .find()
-//     .toArray()
-//     .then((results) => {
-//       res.json(results);
-//     });
-// });
+router.post('/add', (req, res) => {
+  let date = new Date();
+  console.log(typeof date);
+  let newMessage = req.body;
+  newMessage.datePosted = date
+  req.app.locals.db
+          .collection('messages')
+          .insertOne(newMessage)
+          .then((results) => {
+            res.json(results);
+          });
+})
+
+//Find one specific message/post
+router.post('/', (req, res) => {  
+  const id = new ObjectId(req.body.id);
+   
+  req.app.locals.db.collection("messages").findOne({ "_id": id })
+  .then((message) => {
+    if (message) {
+      res.status(200).json(message);
+    } else {
+      res.status(404).json({ message: 'Message/post not found' });
+    }
+  })
+  .catch(error => {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  });
+})
+
+//Get all messages from one user
+ router.post('/display', (req, res) => {  
+ const  user  = req.body.userName; 
+
+  req.app.locals.db.collection("messages").find({ "userName": user }).toArray()
+  .then(result => {
+    console.log(result);
+
+    let getMessages = [];
+
+    for (const message of result) {
+      getMessages.push(message);
+    }
+    res.status(201).json(getMessages);
+  })
+  .catch(error => {
+    console.error(error);
+    res.status(500).json({ error: 'Server error - could not get messages' });
+  });
+})
 
 
-router.post('/', (req, res) => {
+router.post('/sortlt', async(req, res) => {
   
-  const messageIdToFind = req.body.id;
+  let date = new Date();
 
-  req.app.locals.db.collection("messages").findOne({ id: messageIdToFind })
-    .then(message => {
-      if (message) {
-        res.status(200).json(message);
-      } else {
-        res.status(404).json({ message: 'Message/post not found' });
-      }
+  await req.app.locals.db.collection('messages').find({datePosted: {$lt: date}}).toArray()
+  .then(result => {
+    
+    res
+  })
+  .catch(err => {
+
+    res.status(500).json({
+      message: "There was a error sorting the messages"
+    })
+  })
+}); 
+
+//DELETE ALL 
+router.delete('/all', (req, res) => {
+  req.app.locals.db.collection("messages").deleteMany({})
+    .then(result => {
+      console.log(`${result.deletedCount} messages have been deleted from the database.`);
+      res.status(200).json({ message: `${result.deletedCount} messages have been deleted from the database.` });
     })
     .catch(error => {
       console.error(error);
-      res.status(500).json({ error: 'Server error' });
+      res.status(500).json({ error: 'Server error - could not delete messages.' });
     });
-})
+});
 
 
 
