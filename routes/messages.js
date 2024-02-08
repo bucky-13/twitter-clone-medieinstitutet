@@ -66,6 +66,7 @@ router.post('/', (req, res) => {
 })
 
 
+// Sort message by the date of creation / Less then
 router.post('/sortlt', async(req, res) => {
   
   let date = new Date();
@@ -73,7 +74,7 @@ router.post('/sortlt', async(req, res) => {
   await req.app.locals.db.collection('messages').find({datePosted: {$lt: date}}).toArray()
   .then(result => {
     
-    res
+    res.status(200).json(result);
   })
   .catch(err => {
 
