@@ -2,31 +2,35 @@ var express = require('express');
 var router = express.Router();
 require('dotenv').config();
 const ObjectId = require('mongodb').ObjectId;
+const OpenAI = require('openai');
 
-router.get('/', function (req, res) {
-  req.app.locals.db
-    .collection('messages')
-    .find()
-    .toArray()
-    .then((results) => {
-      res.json(results);
-    });
+const openai = new OpenAI({
+  apiKey: process.env["OPENAI_API_KEY"],
+});
+
+router.get('/', (req, res) => {
+  req.app.locals.db.collection('messages').find().toArray()
+  .then((results) => {
+
+    res.json(results);
+  });
 });
 
 router.post('/add', (req, res) => {
+  
   let date = new Date();
-  console.log(typeof date);
+  // console.log(typeof date);
   let newMessage = req.body;
   newMessage.datePosted = date
-  req.app.locals.db
-          .collection('messages')
-          .insertOne(newMessage)
-          .then((results) => {
-            res.json(results);
-          });
+  
+  req.app.locals.db.collection('messages').insertOne(newMessage)
+  .then((results) => {
+
+    res.json(results);
+  });
 })
 
-//Find one specific message/post
+// Find one specific message/post
 router.post('/', (req, res) => {  
   const id = new ObjectId(req.body.id);
    
@@ -65,7 +69,6 @@ router.post('/', (req, res) => {
   });
 })
 
-
 // Sort message by the date of creation / Less then
 router.post('/sortlt', async(req, res) => {
   
@@ -84,7 +87,7 @@ router.post('/sortlt', async(req, res) => {
   })
 }); 
 
-//DELETE ALL 
+// Delete all messages from the database
 router.delete('/all', (req, res) => {
   req.app.locals.db.collection("messages").deleteMany({})
     .then(result => {

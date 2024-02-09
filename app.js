@@ -1,11 +1,10 @@
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var cors = require('cors');
-let MongoClient = require('mongodb').MongoClient;
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const cors = require('cors');
+const MongoClient = require('mongodb').MongoClient;
 require('dotenv').config();
-const ObjectId = require('mongodb').ObjectId;
 
 MongoClient.connect('mongodb://127.0.0.1:27017').then((client) => {
   console.log('Connected to Database');
@@ -15,19 +14,20 @@ MongoClient.connect('mongodb://127.0.0.1:27017').then((client) => {
   app.locals.db = db;
 });
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var messagesRouter = require('./routes/messages');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const messagesRouter = require('./routes/messages');
+const aiRouter = require('./routes/ai');
 
-var app = express();
+const app = express();
 
-let postsObjects = [
+/* let postsObjects = [
   {
     userName: 'string',
     userMessage: 'string',
     id: 'string',
   },
-];
+]; */
 
 app.use(cors());
 app.use(logger('dev'));
@@ -39,9 +39,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/messages', messagesRouter);
-
-app.get("/test", (req, res) => {
-  res.send("test")
-})
+app.use('/ai', aiRouter);
 
 module.exports = app;
